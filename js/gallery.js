@@ -89,8 +89,47 @@ gallery.addEventListener('click', event => {
     return;
   }
   const imageUrl = event.target.dataset.source;
-  const instance = basicLightbox.create(`
+  const instance = basicLightbox.create(
+    `
+    <div class="lightbox-content">
+       <span class="prev">&lt;</span>
        <img src="${imageUrl}" alt="${event.target.alt}">
-    `);
+       <span class="next">&gt;</span>
+    </div>`
+  );
   instance.show();
+
+  // Отримайте посилання на елементи стрілок всередині функції, яка створює модальне вікно
+  var prevButton = instance.element().querySelector('.prev');
+  var nextButton = instance.element().querySelector('.next');
+
+  // Додайте обробник події для кліку на стрілку вліво
+  prevButton.addEventListener('click', function () {
+    showPrevImage(instance);
+  });
+
+  // Додайте обробник події для кліку на стрілку вправо
+  nextButton.addEventListener('click', function () {
+    showNextImage(instance);
+  });
 });
+
+// Функція для показу попереднього зображення
+function showPrevImage(instance) {
+  const currentImage = instance.element().querySelector('img');
+  const currentIndex = images.findIndex(
+    img => img.original === currentImage.src
+  );
+  const prevIndex = (currentIndex - 1 + images.length) % images.length;
+  currentImage.src = images[prevIndex].original;
+}
+
+// Функція для показу наступного зображення
+function showNextImage(instance) {
+  const currentImage = instance.element().querySelector('img');
+  const currentIndex = images.findIndex(
+    img => img.original === currentImage.src
+  );
+  const nextIndex = (currentIndex + 1) % images.length;
+  currentImage.src = images[nextIndex].original;
+}
